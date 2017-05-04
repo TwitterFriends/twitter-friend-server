@@ -21,7 +21,7 @@ library
                      , aeson
                      , base64-bytestring
                      , bytestring
---                     , lsh
+                     , lsh
                      , scotty
                      , url
                      , wai
