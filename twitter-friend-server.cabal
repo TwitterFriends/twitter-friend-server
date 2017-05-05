@@ -16,12 +16,13 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Auth
-                     , Hashing
+                     , SimHash
   build-depends:       base >= 4.7 && < 5
                      , aeson
                      , base64-bytestring
+                     , bloomfilter
                      , bytestring
-                     , lsh
+                     , hashable
                      , scotty
                      , url
                      , wai
