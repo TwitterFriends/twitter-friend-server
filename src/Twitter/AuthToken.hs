@@ -3,8 +3,10 @@ module Twitter.AuthToken where
 import BasicPrelude hiding (ByteString,lookup)
 
 import Data.Aeson
+import qualified Data.ByteString as BS
 import Data.ByteString.Lazy hiding (zip)
 import Data.Map.Strict (Map,lookup)
+import Data.Text.Encoding
 import Network.HTTP.Client
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types.Header
@@ -12,7 +14,7 @@ import Network.HTTP.Types.Header
 import Safe
 type AuthToken = ByteString
 
-authClient :: IO Text
+authClient :: IO Header
 authClient = do
   manager  <- newManager tlsManagerSettings
   init_req <- parseRequest token_url
@@ -22,7 +24,7 @@ authClient = do
                 }
   body <- liftM (fromJustNote decode_fail_msg . decode)
             (responseBody <$> httpLbs request manager) :: IO (Map Text Text)
-  return (fromJustNote fail_msg $ lookup lookup_str body) 
+  return (authToken $ fromJustNote fail_msg $ lookup lookup_str body) 
   where
     req_obj = "grant_type=client_credentials"
     lookup_str = "access_token"
@@ -37,6 +39,11 @@ tokenHeader = [content_header, auth_header]
     auth_header    = (,) hAuthorization basicBS
     contentBS = "application/x-www-form-urlencoded;charset=UTF-8"
     basicBS   = "Basic aFh2MlVwUDJEZzlYRXBzMmJRekZZblloaToyenlsc2s3QWs2T1NCUVJoT1FmcFNsMGcxOG53QXpma0FlYktrRU9qWGtDZ0pVOTRJZA=="
+
+authToken :: Text -> Header
+authToken tok = (,) hAuthorization encoded
+  where
+    encoded = "Bearer " <> (encodeUtf8 tok)
 
 token_url :: String
 token_url = "https://api.twitter.com/oauth2/token"
