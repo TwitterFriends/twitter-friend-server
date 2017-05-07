@@ -4,12 +4,14 @@ import           BasicPrelude
 
 import           Data.Aeson
 
+import           Network.HTTP.Types.Header
+
 data Tag = Tag { tag :: Text } deriving Show
 data UserMention = UserMention {user_mention :: Text} deriving Show
 
 type Tweet = Text
 type TwitterName = Text
-
+type AuthHeader = Header
 data TweetInfo = TweetInfo
   { hashtags :: [Tag]
   , user_mentions :: [UserMention]
